@@ -1,0 +1,661 @@
+:root {
+    --primary-blue: #005BFF;
+    --primary-blue-dark: #0056b3;
+    --secondary-bg-light: #e0f2fe;
+    --text-color-dark: #333;
+    --text-color-light: #fff;
+    --border-color: #ddd;
+    --shadow-light: rgba(0, 0, 0, 0.1);
+    --shadow-medium: rgba(0, 0, 0, 0.2);
+
+    --widget-width: 420px; /* Ширина чата */
+    --widget-height: 100vh; /* Высота чата */
+    --toggle-width: 280px; /* Ширина кнопки открытия */
+    --toggle-height: 64px; /* Высота кнопки открытия */
+
+    --border-radius-default: 12px;
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+}
+
+/* Base styles */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+    color: var(--text-color-dark);
+    background-color: #f7f7f7; /* Для визуализации, если нет основной страницы */
+}
+
+button {
+    cursor: pointer;
+    border: none;
+    background: none;
+    padding: 0;
+    color: inherit;
+    font-size: inherit;
+    outline: none; /* Убираем стандартный outline */
+}
+
+/* Accessibility */
+[aria-hidden="true"] {
+    display: none;
+}
+
+/* --- Widget Toggle Button (В углу экрана) --- */
+.ai-assistant-toggle {
+    position: fixed;
+    bottom: var(--spacing-md);
+    right: var(--spacing-md);
+    background-color: var(--primary-blue);
+    color: var(--text-color-light);
+    border-radius: var(--border-radius-default);
+    padding: var(--spacing-sm);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    box-shadow: 0 4px 15px var(--shadow-medium);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    z-index: 9999; /* Чтобы был поверх всего */
+    width: var(--toggle-width);
+    height: var(--toggle-height);
+}
+
+.ai-assistant-toggle:hover,
+.ai-assistant-toggle:focus {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px var(--shadow-medium);
+}
+
+.ai-assistant-toggle__avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+}
+
+.ai-assistant-toggle__avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.ai-assistant-toggle__info {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    flex-grow: 1;
+}
+
+.ai-assistant-toggle__title {
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+.ai-assistant-toggle__subtitle {
+    font-size: 0.85em;
+    opacity: 0.9;
+}
+
+/* --- Chat Window --- */
+.ai-assistant-chat {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    width: var(--widget-width);
+    height: var(--widget-height);
+    background: linear-gradient(180deg, #F5F8FE 0%, #DAE6FE 100%);
+    box-shadow: 0 8px 30px var(--shadow-medium);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Для скругленных углов */
+    z-index: 1001; /* Поверх кнопки */
+
+    /* Изначально скрыт, будет анимироваться */
+    opacity: 0;
+    pointer-events: none; /* Не реагирует на события, когда скрыт */
+    transform: scale(0.9) translateY(20px);
+    transform-origin: bottom right; /* Точка трансформации от нижнего правого угла */
+}
+/* Этот стиль для показа окна чата - анимация в animations.css */
+
+
+/* Chat Header */
+.chat-header {
+    background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-dark));
+    color: var(--text-color-light);
+    padding: var(--spacing-md);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 10px var(--shadow-light);
+    flex-shrink: 0; /* Не сжимается */
+    margin: 30px;
+    border-radius: 30px;
+}
+
+.chat-header__info {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.chat-header__avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    flex-shrink: 0;
+}
+
+.chat-header__avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.chat-header__text {
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-header__title {
+    margin: 0;
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+.chat-header__subtitle {
+    font-size: 0.8em;
+    opacity: 0.8;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.chat-header__status {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #4CAF50; /* Online green */
+    display: inline-block;
+    flex-shrink: 0;
+}
+
+.chat-header__close-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-color-light);
+    transition: background 0.2s ease;
+}
+
+.chat-header__close-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.chat-header__close-btn .material-icons {
+    font-size: 20px;
+}
+
+/* Chat Messages Area */
+.chat-messages {
+    flex-grow: 1; /* Занимает все доступное пространство */
+    padding: var(--spacing-md);
+    overflow-y: auto; /* Прокрутка сообщений */
+    display: flex;
+    flex-direction: column; /* сообщения будут идти сверху вниз */
+    gap: var(--spacing-sm);
+}
+
+/* Empty State */
+.chat-messages__empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #647EAE;
+    font-size: 1.1em;
+    text-align: center;
+    height: 100%; /* Чтобы центрировать по вертикали */
+    font-weight: bold;
+}
+
+.chat-messages__empty-icon {
+    font-size: 4em !important;
+    margin-bottom: var(--spacing-sm);
+    color: #647EAE;
+}
+
+/* Chat Message Styles */
+.chat-message {
+    display: flex;
+    gap: var(--spacing-sm);
+    align-items: flex-start;
+    max-width: 80%; /* Ограничение ширины сообщения */
+}
+/* Специальный контейнер для пузыря и времени, если нужно, чтобы аватар был отдельно от остального контента */
+/* .chat-message__bubble-container {
+    display: flex;
+    flex-direction: column;
+} */
+
+
+.chat-message--user {
+    align-self: flex-end; /* Сообщения пользователя справа */
+    flex-direction: row-reverse; /* Аватар справа, если нужен */
+}
+
+.chat-message--ai {
+    align-self: flex-start; /* Сообщения AI слева */
+}
+
+.chat-message__avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.chat-message__avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.chat-message__bubble {
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--border-radius-default);
+    position: relative; /* Для стрелочки */
+    word-wrap: break-word; /* Перенос длинных слов */
+}
+
+.chat-message--user .chat-message__bubble {
+    background-color: #CEDEFF;
+    color: #485C89;
+    border-bottom-right-radius: 4px; /* "Оторванный" уголок */
+}
+
+.chat-message--ai .chat-message__bubble {
+    background-color: var(--text-color-light);
+    color: #6C7CA1;
+    border-bottom-left-radius: 4px; /* "Оторванный" уголок */
+}
+
+.chat-message__time {
+    font-size: 0.7em;
+    color: #888;
+    margin-top: var(--spacing-xs);
+    text-align: right; /* Время для пользователя справа */
+    margin-left: auto;
+}
+
+.chat-message--ai .chat-message__time {
+    text-align: left; /* Время для AI слева */
+    margin-right: auto;
+    margin-left: 0;
+}
+
+/* Feedback buttons for AI message */
+.chat-message__feedback {
+    display: flex;
+    gap: var(--spacing-xs);
+    margin-top: var(--spacing-sm);
+    border-top: 1px solid var(--border-color);
+    padding-top: var(--spacing-sm);
+}
+
+.chat-message__feedback button {
+    background-color: #fff;
+    border: 2px solid #8195BD;
+    padding: 10px;
+    border-radius: var(--border-radius-default);
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color:#8195BD;
+}
+
+.chat-message__feedback button:hover {
+    background-color: #e0e0e0;
+}
+
+.chat-message__feedback button.active {
+    background-color: var(--primary-blue);
+    color: var(--text-color-light);
+    border-color: var(--primary-blue-dark);
+}
+
+/* Typing Indicator (ИИ думает...) */
+.typing-indicator {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-size: 0.9em;
+    color: #6C7CA1;
+}
+
+.typing-indicator .material-icons {
+    font-size: 1.2em;
+    color: var(--primary-blue);
+    animation: bounce 0.8s infinite alternate;
+}
+
+@keyframes bounce {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-3px); }
+}
+
+/* Стили для аудиосообщения */
+.chat-message__audio-player {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--border-radius-default);
+}
+
+.chat-message--user .chat-message__audio-player {
+    background-color: var(--primary-blue);
+    color: var(--text-color-light);
+    border-bottom-right-radius: 4px; /* "Оторванный" уголок */
+}
+
+.chat-message--user .chat-message__audio-player .chat-message__play-button .material-icons{
+    color:#fff;
+}
+
+.chat-message--ai .chat-message__audio-player {
+    background-color: var(--text-color-light);
+    color: var(--text-color-dark);
+    border: 1px solid var(--border-color);
+    border-bottom-left-radius: 4px; /* "Оторванный" уголок */
+}
+
+.chat-message__play-button {
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    flex-shrink: 0;
+}
+
+.chat-message__play-button .material-icons {
+    font-size: 2em;
+    color:var(--primary-blue);
+}
+
+.chat-message__waveform {
+    flex-grow: 1;
+    height: 30px;
+    border-radius: 15px;
+    position: relative;
+    overflow: hidden;
+}
+
+.chat-message--user .chat-message__waveform {
+    /* Градиент для User-аудио: белая волна на синем фоне */
+    background: linear-gradient(to right,
+        rgba(255,255,255,0.6) 0%,
+        rgba(255,255,255,0.6) var(--audio-progress, 0%),
+        rgba(255,255,255,0.3) var(--audio-progress, 0%),
+        rgba(255,255,255,0.3) 100%
+    );
+}
+
+.chat-message--ai .chat-message__waveform {
+    /* Градиент для AI-аудио: синяя волна на светло-сером фоне */
+    background: linear-gradient(to right,
+        var(--primary-blue) 0%,
+        var(--primary-blue) var(--audio-progress, 0%),
+        #e0e0e0 var(--audio-progress, 0%),
+        #e0e0e0 100%
+    );
+}
+
+.chat-message__duration {
+    font-size: 0.8em;
+    flex-shrink: 0;
+    width: 40px;
+    text-align: right;
+}
+
+
+/* Chat Input Area */
+.chat-input-area {
+    padding: 30px;
+    flex-shrink: 0;
+}
+
+.chat-input-area__tabs {
+    display: inline-flex;
+    margin-bottom: var(--spacing-md);
+    background-color: #C1CFE9;
+    border-radius: 12px;
+    padding: 6px;
+}
+
+.chat-input-area__tab {
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: 12px;
+    font-weight: bold;
+    color: #666;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-xs);
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.chat-input-area__tab.active {
+    background-color: var(--primary-blue);
+    color: var(--text-color-light);
+}
+
+.chat-input-area__tab:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+
+/* Контейнер для переключаемого контента */
+.chat-input-content {
+    position: relative;
+    /*min-height: 120px; /* Минимальная высота, чтобы не скакало при переключении */
+    transition: min-height 0.3s ease; /* Плавное изменение высоты при переключении секций */
+}
+
+/* Секции ввода */
+.text-input-section,
+.audio-input-section {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    opacity: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.text-input-section.active,
+.audio-input-section.active {
+    opacity: 1;
+    position: static;
+    pointer-events: all;
+    transition: opacity 0.3s ease-in-out; /* Убедимся, что opacity анимируется */
+}
+
+/* Специальные стили для текстовой секции, когда она активна, чтобы input-wrapper и suggestions были видны */
+.text-input-section.active .chat-input-wrapper {
+    display: flex;
+}
+
+/* Полностью скрываем элементы текстового ввода, когда секция неактивна */
+.text-input-section:not(.active) .chat-input-wrapper,
+.text-input-section:not(.active) .chat-input-area__suggestions {
+    display: none;
+}
+
+
+.chat-input-wrapper {
+    display: flex;
+    align-items: flex-end;
+    gap: var(--spacing-sm);
+    width: 100%;
+}
+
+.chat-input-area__textarea {
+    flex-grow: 1;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-default);
+    padding: var(--spacing-sm) var(--spacing-md);
+    resize: none;
+    min-height: 31px;
+    max-height: 120px;
+    font-size: 1em;
+    line-height: 1.4;
+    overflow-y: auto;
+    transition: height 0.2s ease, border-color 0.2s ease;
+    font-family: inherit;
+}
+
+.chat-input-area__textarea:focus {
+    /*border-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);*/
+}
+
+.chat-input-area__send-button {
+    background-color: var(--primary-blue);
+    color: var(--text-color-light);
+    border-radius: var(--border-radius-default);
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.chat-input-area__send-button:hover:not(:disabled) {
+    background-color: var(--primary-blue-dark);
+}
+
+.chat-input-area__send-button:active:not(:disabled) {
+    transform: scale(0.95);
+}
+
+.chat-input-area__send-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.chat-input-area__send-button .material-icons {
+    font-size: 24px;
+}
+
+/* Suggestions */
+.chat-input-area__suggestions {
+    display: none; /* Изначально скрыты */
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-md);
+    max-height: 150px;
+}
+
+.chat-input-area__suggestions.active {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.chat-input-area__suggestion-button {
+    background-color: #0071FF;
+    border-radius: var(--border-radius-default);
+    padding: var(--spacing-md) var(--spacing-md);
+    color: #fff;
+    font-weight: 500;
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.1s ease;
+    text-align: center;
+}
+
+.chat-input-area__suggestion-button:hover {
+    /*background-color: #e6e9ed;
+    border-color: var(--primary-blue);*/
+}
+
+.chat-input-area__suggestion-button:active {
+    /*transform: scale(0.98);*/
+}
+
+
+/* Стили для аудио ввода */
+.audio-input-section {
+    background-color: var(--text-color-light);
+    border-radius: var(--border-radius-default);
+    padding: var(--spacing-md);
+    box-sizing: border-box;
+    /* Убираем display: flex; так как он теперь управляется через .active */
+}
+
+
+.audio-input-section__microphone-button {
+    background-color: #DFE9FE;
+    border-radius: 50%;
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-blue);
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    margin-bottom: var(--spacing-sm);
+}
+
+.audio-input-section__microphone-button .material-icons {
+    font-size: 2.5em;
+    color:#E94444;
+}
+
+.audio-input-section__microphone-button:hover {
+    background-color: #e6e9ed;
+}
+
+.audio-input-section__microphone-button:active {
+    transform: scale(0.95);
+}
+
+.audio-input-section__placeholder-text {
+    font-size: 0.9em;
+    color: #999;
+    text-align: center;
+    margin: 0;
+}
+
+@media (max-width: 479px)
+{
+    .ai-assistant-chat{
+        width: 100%;
+    }
+}
