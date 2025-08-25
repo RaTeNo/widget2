@@ -1,9 +1,8 @@
 import { getElement, createElement, getAllElements } from '../utils/dom.js';
 
 // Константы для тестовых аудио (если нужно имитировать отправку реального аудио пользователем)
-const USER_RECORDED_AUDIO_URL = 'assets/audio/user-recorded.mp3'; // Реальный путь к аудио
-const USER_RECORDED_AUDIO_DURATION = 15; // Примерная длительность в секундах, если файл короткий
-
+const USER_RECORDED_AUDIO_FILE = 'assets/audio/user-recorded.mp3'; // Реальный путь к аудио для пользователя
+const USER_RECORDED_MOCK_DURATION = 15; // Примерная длительность в секундах для мока, если user-recorded.mp3 не существует
 
 export class InputArea {
     constructor(containerSelector, onSendMessage) {
@@ -24,7 +23,7 @@ export class InputArea {
             'дай возражения',
             'дай аргументы',
             'дай техники',
-            'напиши текст письма', // Добавил обратно, чтобы было больше
+            'напиши текст письма',
             'создай отчёт'
         ];
 
@@ -180,19 +179,16 @@ export class InputArea {
         this.micButton.classList.remove('recording');
         this.micButton.innerHTML = '<span class="material-icons">mic</span>';
 
-        // Вычисляем длительность записи, округляем до 1 секунды, минимум 1 секунда для отправки
         const recordingDurationMs = Date.now() - this.recordingStartTime;
         const recordingDurationSeconds = Math.max(1, Math.round(recordingDurationMs / 1000));
 
         if (!cancel && recordingDurationSeconds > 0) {
             this.micPlaceholderText.textContent = 'Аудио отправлено. Нажмите, чтобы начать новую запись.';
             console.log(`Запись остановлена. Длительность: ${recordingDurationSeconds} сек.`);
-            // Используем реальный путь к файлу для отправляемого аудио от пользователя
+            // Для пользователя передаем URL реального файла, а длительность можем взять из константы или имитированной записи
             this.onSendMessage({
-                audioUrl: USER_RECORDED_AUDIO_URL,
-                // Для демо, если не указана длительность, возьмем из константы
-                // В реальном проекте, длительность будет известна после обработки записи
-                audioDuration: USER_RECORDED_AUDIO_DURATION || recordingDurationSeconds
+                audioUrl: USER_RECORDED_AUDIO_FILE,
+                audioDuration: USER_RECORDED_MOCK_DURATION || recordingDurationSeconds // Используем константу, если нужна фиксированная, иначе - имитированная
             });
         } else {
             this.micPlaceholderText.textContent = 'Нажмите и отпустите, чтобы начать запись';
