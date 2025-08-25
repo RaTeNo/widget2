@@ -1,5 +1,5 @@
 :root {
-    --primary-blue: #005BFF;
+    --primary-blue: #005BFF; /* Обновленный цвет */
     --primary-blue-dark: #0056b3;
     --secondary-bg-light: #e0f2fe;
     --text-color-dark: #333;
@@ -109,7 +109,7 @@ button {
     right: 0;
     width: var(--widget-width);
     height: var(--widget-height);
-    background: linear-gradient(180deg, #F5F8FE 0%, #DAE6FE 100%);
+    background: linear-gradient(180deg, #F5F8FE 0%, #DAE6FE 100%); /* Обновленные цвета градиента */
     box-shadow: 0 8px 30px var(--shadow-medium);
     display: flex;
     flex-direction: column;
@@ -135,8 +135,8 @@ button {
     justify-content: space-between;
     box-shadow: 0 2px 10px var(--shadow-light);
     flex-shrink: 0; /* Не сжимается */
-    margin: 30px;
-    border-radius: 30px;
+    margin: 30px; /* Отступы побольше */
+    border-radius: 30px; /* Сильные скругления */
 }
 
 .chat-header__info {
@@ -224,7 +224,7 @@ button {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    color: #647EAE;
+    color: #647EAE; /* Новый цвет */
     font-size: 1.1em;
     text-align: center;
     height: 100%; /* Чтобы центрировать по вертикали */
@@ -234,7 +234,7 @@ button {
 .chat-messages__empty-icon {
     font-size: 4em !important;
     margin-bottom: var(--spacing-sm);
-    color: #647EAE;
+    color: #647EAE; /* Новый цвет */
 }
 
 /* Chat Message Styles */
@@ -244,11 +244,6 @@ button {
     align-items: flex-start;
     max-width: 80%; /* Ограничение ширины сообщения */
 }
-/* Специальный контейнер для пузыря и времени, если нужно, чтобы аватар был отдельно от остального контента */
-/* .chat-message__bubble-container {
-    display: flex;
-    flex-direction: column;
-} */
 
 
 .chat-message--user {
@@ -283,14 +278,14 @@ button {
 }
 
 .chat-message--user .chat-message__bubble {
-    background-color: #CEDEFF;
-    color: #485C89;
+    background-color: #CEDEFF; /* Новый цвет */
+    color: #485C89; /* Новый цвет */
     border-bottom-right-radius: 4px; /* "Оторванный" уголок */
 }
 
 .chat-message--ai .chat-message__bubble {
     background-color: var(--text-color-light);
-    color: #6C7CA1;
+    color: #6C7CA1; /* Новый цвет */
     border-bottom-left-radius: 4px; /* "Оторванный" уголок */
 }
 
@@ -319,14 +314,14 @@ button {
 
 .chat-message__feedback button {
     background-color: #fff;
-    border: 2px solid #8195BD;
-    padding: 10px;
+    border: 2px solid #8195BD; /* Новый цвет */
+    padding: 10px; /* Больший padding */
     border-radius: var(--border-radius-default);
     transition: background-color 0.2s ease, border-color 0.2s ease;
     display: flex;
     align-items: center;
     gap: 4px;
-    color:#8195BD;
+    color:#8195BD; /* Новый цвет */
 }
 
 .chat-message__feedback button:hover {
@@ -345,7 +340,7 @@ button {
     align-items: center;
     gap: var(--spacing-xs);
     font-size: 0.9em;
-    color: #6C7CA1;
+    color: #6C7CA1; /* Новый цвет */
 }
 
 .typing-indicator .material-icons {
@@ -396,18 +391,20 @@ button {
     padding: 0;
     flex-shrink: 0;
 }
-
+/* Обновляем цвета иконок для Play/Pause */
 .chat-message__play-button .material-icons {
     font-size: 2em;
-    color:var(--primary-blue);
+    color:var(--primary-blue); /* Для AI будет синий, для юзера - перекрывается правилом выше */
 }
 
 .chat-message__waveform {
     flex-grow: 1;
-    height: 30px;
+    height: 4px;
     border-radius: 15px;
     position: relative;
     overflow: hidden;
+    cursor: pointer; /* Делаем курсор "рука" для перемотки */
+    width: 100px;
 }
 
 .chat-message--user .chat-message__waveform {
@@ -447,7 +444,7 @@ button {
 .chat-input-area__tabs {
     display: inline-flex;
     margin-bottom: var(--spacing-md);
-    background-color: #C1CFE9;
+    background-color: #C1CFE9; /* Новый цвет */
     border-radius: 12px;
     padding: 6px;
 }
@@ -591,7 +588,7 @@ button {
 }
 
 .chat-input-area__suggestion-button {
-    background-color: #0071FF;
+    background-color: #0071FF; /* Новый цвет */
     border-radius: var(--border-radius-default);
     padding: var(--spacing-md) var(--spacing-md);
     color: #fff;
@@ -621,9 +618,9 @@ button {
 
 
 .audio-input-section__microphone-button {
-    background-color: #DFE9FE;
+    background-color: #DFE9FE; /* Новый цвет */
     border-radius: 50%;
-    width: 56px;
+    width: 56px; /* Меньший размер */
     height: 56px;
     display: flex;
     align-items: center;
@@ -634,8 +631,8 @@ button {
 }
 
 .audio-input-section__microphone-button .material-icons {
-    font-size: 2.5em;
-    color:#E94444;
+    font-size: 2.5em; /* Меньший размер */
+    color:#E94444; /* Красный цвет иконки */
 }
 
 .audio-input-section__microphone-button:hover {

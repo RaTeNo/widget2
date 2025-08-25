@@ -2,6 +2,11 @@ import { getElement, createElement } from '../utils/dom.js';
 import { ChatMessage } from './ChatMessage.js';
 import { InputArea } from './InputArea.js';
 
+// Константы для тестовых аудио (должны существовать в папке assets/audio/)
+const AI_TEST_AUDIO_URL = 'assets/audio/ai-sample.mp3';
+const USER_TEST_AUDIO_URL = 'assets/audio/user-sample.mp3';
+
+
 export class ChatWidget {
     constructor() {
         this.toggleButton = getElement('#aiAssistantToggle');
@@ -18,7 +23,6 @@ export class ChatWidget {
         this.isChatOpen = false;
         this.newMessageCounter = 0;
 
-        // Передаем handleSendMessage в InputArea
         this.inputArea = new InputArea('.chat-input-area', this.handleSendMessage.bind(this));
 
         this.initEventListeners();
@@ -27,7 +31,6 @@ export class ChatWidget {
 
     initEventListeners() {
         this.toggleButton.addEventListener('click', () => this.toggleChat());
-        // Добавляем обработчик для возможности закрытия по Escape
         document.addEventListener('keydown', (event) => {
             if (event.key === 'Escape' && this.isChatOpen) {
                 this.closeChat();
@@ -42,16 +45,14 @@ export class ChatWidget {
         this.toggleButton.setAttribute('aria-expanded', this.isChatOpen);
 
         if (this.isChatOpen) {
-            this.chatWindow.focus(); // Передаем фокус на окно чата для доступности
-            this.newMessageCounter = 0; // Сбрасываем счетчик при открытии
+            this.chatWindow.focus();
+            this.newMessageCounter = 0;
             this.updateNewMessagesCount();
             this.scrollToBottom();
-            // Плавное скрытие кнопки при открытии чата
             this.toggleButton.style.opacity = '0';
             this.toggleButton.style.transform = 'scale(0.5)';
             this.toggleButton.style.pointerEvents = 'none';
         } else {
-            // Плавное появление кнопки при закрытии чата
             this.toggleButton.style.opacity = '1';
             this.toggleButton.style.transform = 'scale(1)';
             this.toggleButton.style.pointerEvents = 'all';
@@ -70,29 +71,18 @@ export class ChatWidget {
         }
     }
 
-    /**
-     * Добавляет новое сообщение в чат.
-     * @param {string} type - Тип сообщения ('user' или 'ai').
-     * @param {string} content - Текстовое содержимое сообщения (опционально, для текстовых сообщений).
-     * @param {string} avatar - URL аватара отправителя.
-     * @param {boolean} showFeedback - Показывать ли кнопки фидбека (только для AI текстовых сообщений).
-     * @param {string} audioUrl - URL аудиофайла (опционально, для аудиосообщений).
-     * @param {number} audioDuration - Длительность аудио в секундах (опционально, для аудиосообщений).
-     */
     addMessage(type, content = null, avatar, showFeedback = false, audioUrl = null, audioDuration = null) {
         const timestamp = new Date();
         const message = new ChatMessage(type, content, timestamp, avatar, showFeedback, audioUrl, audioDuration);
         this.messages.push(message);
         this.chatMessagesContainer.appendChild(message.element);
 
-        // Скрываем "Сообщений пока нет" если есть сообщения
         if (this.messages.length > 0 && this.emptyState) {
             this.emptyState.style.display = 'none';
         }
 
         this.scrollToBottom();
 
-        // Увеличиваем счетчик новых сообщений, если чат закрыт и это сообщение от AI
         if (!this.isChatOpen && type === 'ai') {
             this.newMessageCounter++;
             this.updateNewMessagesCount();
@@ -100,36 +90,36 @@ export class ChatWidget {
     }
 
     handleSendMessage(messageData) {
-        // messageData может быть строкой (текстовое сообщение) или объектом (аудиосообщение)
+        let isUserAudioMessage = false;
+
         if (typeof messageData === 'string') {
-            // Текстовое сообщение от пользователя
             this.addMessage('user', messageData, this.userAvatar);
         } else if (messageData && messageData.audioUrl) {
-            // Аудио сообщение от пользователя
             this.addMessage('user', null, this.userAvatar, false, messageData.audioUrl, messageData.audioDuration);
+            isUserAudioMessage = true;
         }
 
-        // Добавляем индикатор "ИИ думает..."
         const typingPlaceholder = this.addTypingIndicator();
 
-        // Имитируем задержку ответа от ИИ (например, 3-5 секунд)
         const responseDelay = Math.random() * (5000 - 3000) + 3000; // От 3 до 5 секунд
         setTimeout(() => {
             this.removeTypingIndicator(typingPlaceholder);
-            // Определяем, должен ли ИИ ответить текстом или аудио.
-            // Для примера, AI будет чередовать ответы (текст, затем аудио, затем текст...)
-            const totalAiMessages = this.messages.filter(msg => msg.type === 'ai').length;
-            if (totalAiMessages % 2 === 0) { // Каждое второе сообщение AI будет аудио
-                 // Ответ от AI в виде аудио
-                 const mockAudioUrl = 'mock'; // Используем "mock" для отсутствия реального файла
-                 const mockAudioDuration = Math.floor(Math.random() * (90 - 20 + 1)) + 20; // Случайная длительность от 20 до 90 секунд
-                 this.addMessage('ai', null, this.aiAvatar, false, mockAudioUrl, mockAudioDuration);
-                 console.log(`AI ответил аудио длительностью ${mockAudioDuration}с.`);
+            
+            // Если пользователь отправил аудио, AI всегда отвечает текстом (пока что)
+            // Иначе, AI чередует ответы
+            if (isUserAudioMessage) {
+                const aiResponse = this.generateAiResponse("На ваше аудиосообщение"); 
+                this.addMessage('ai', aiResponse, this.aiAvatar, true);
             } else {
-                 // Ответ от AI в виде текста
-                 const userMessageContent = typeof messageData === 'string' ? messageData : '';
-                 const aiResponse = this.generateAiResponse(userMessageContent);
-                 this.addMessage('ai', aiResponse, this.aiAvatar, true);
+                const totalAiTextMessages = this.messages.filter(msg => msg.type === 'ai' && msg.content).length;
+                // Чередуем: текстовый ответ, аудио ответ
+                if (totalAiTextMessages % 2 === 0) { 
+                    const aiResponse = this.generateAiResponse(typeof messageData === 'string' ? messageData : '');
+                    this.addMessage('ai', aiResponse, this.aiAvatar, true);
+                } else {
+                    this.addMessage('ai', null, this.aiAvatar, false, AI_TEST_AUDIO_URL, null); // null для audioDuration
+                    console.log(`AI ответил реальным аудио.`);
+                }
             }
         }, responseDelay);
     }
@@ -140,7 +130,7 @@ export class ChatWidget {
         const avatarImg = createElement('img', [], { src: this.aiAvatar, alt: 'Аватар AI' });
         avatarDiv.appendChild(avatarImg);
 
-        const bubbleContainer = createElement('div'); // Для размещения пузыря относительно аватара
+        const bubbleContainer = createElement('div');
         const bubble = createElement('div', ['chat-message__bubble']);
         bubble.innerHTML = `
             <div class="typing-indicator">
@@ -165,7 +155,6 @@ export class ChatWidget {
     }
 
     generateAiResponse(userMessage) {
-        // Более разнообразная логика для примера
         userMessage = userMessage.toLowerCase();
         if (userMessage.includes('привет') || userMessage.includes('здравствуй')) {
             return `Привет! Я ваш AI-помощник по продажам. Готов помочь! 🚀`;
@@ -177,7 +166,7 @@ export class ChatWidget {
             return `Для какого типа отчета вам нужна помощь? По продажам, аналитике, или что-то другое?`;
         } else if (userMessage.includes('спасибо')) {
             return `Всегда к вашим услугам! Обращайтесь, если что-то еще понадобится.`;
-        } else if (userMessage.length < 5) {
+        } else if (userMessage.length < 5 && userMessage.length > 0) {
              return `Я тут, слушаю внимательно! Что еще могу для вас сделать?`;
         }
         else {
@@ -191,9 +180,8 @@ export class ChatWidget {
 
     updateNewMessagesCount() {
         this.newMessagesCountSpan.textContent = this.newMessageCounter.toString();
-        // Можно добавить класс на кнопку-переключатель, если есть новые сообщения и чат закрыт
         if (this.newMessageCounter > 0 && !this.isChatOpen) {
-            this.toggleButton.classList.add('has-new-messages'); // Для стилизации
+            this.toggleButton.classList.add('has-new-messages');
         } else {
             this.toggleButton.classList.remove('has-new-messages');
         }

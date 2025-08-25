@@ -1,5 +1,10 @@
 import { getElement, createElement, getAllElements } from '../utils/dom.js';
 
+// Константы для тестовых аудио (если нужно имитировать отправку реального аудио пользователем)
+const USER_RECORDED_AUDIO_URL = 'assets/audio/user-recorded.mp3'; // Реальный путь к аудио
+const USER_RECORDED_AUDIO_DURATION = 15; // Примерная длительность в секундах, если файл короткий
+
+
 export class InputArea {
     constructor(containerSelector, onSendMessage) {
         this.container = getElement(containerSelector);
@@ -8,7 +13,6 @@ export class InputArea {
         this.suggestionsContainer = getElement('.chat-input-area__suggestions', this.container);
         this.tabs = getAllElements('.chat-input-area__tab', this.container);
 
-        // Новые элементы для аудио-ввода
         this.textInputSection = getElement('.text-input-section', this.container);
         this.audioInputSection = getElement('.audio-input-section', this.container);
         this.micButton = getElement('.audio-input-section__microphone-button', this.audioInputSection);
@@ -20,10 +24,12 @@ export class InputArea {
             'дай возражения',
             'дай аргументы',
             'дай техники',
-        ]; // Пример подсказок
+            'напиши текст письма', // Добавил обратно, чтобы было больше
+            'создай отчёт'
+        ];
 
-        this.activeTab = 'text'; // Изначально активна вкладка "Текст"
-        this.isRecording = false; // Состояние записи аудио
+        this.activeTab = 'text';
+        this.isRecording = false;
         this.recordingStartTime = null;
         this.recordingTimerInterval = null;
 
@@ -31,7 +37,7 @@ export class InputArea {
         this.initEventListeners();
         this.updateSendButtonState();
         this.renderSuggestions();
-        this.setActiveSection(this.activeTab); // Устанавливаем активную секцию при инициализации
+        this.setActiveSection(this.activeTab);
     }
 
     initEventListeners() {
@@ -41,7 +47,6 @@ export class InputArea {
         });
 
         this.textarea.addEventListener('focus', () => {
-            // Показываем подсказки только для текстового режима
             if (this.activeTab === 'text') {
                 this.suggestionsContainer.classList.add('active');
             }
@@ -70,10 +75,8 @@ export class InputArea {
 
         this.micButton.addEventListener('mousedown', () => this.startRecording());
         this.micButton.addEventListener('mouseup', () => this.stopRecording());
-        // Также можно добавить touchstart/touchend для мобильных
         this.micButton.addEventListener('touchstart', (e) => { e.preventDefault(); this.startRecording(); }, { passive: false });
         this.micButton.addEventListener('touchend', (e) => { e.preventDefault(); this.stopRecording(); }, { passive: false });
-
     }
 
     adjustTextareaHeight() {
@@ -82,11 +85,10 @@ export class InputArea {
     }
 
     updateSendButtonState() {
-        // Кнопка отправки активна только в текстовом режиме
         if (this.activeTab === 'text') {
             this.sendButton.disabled = this.textarea.value.trim() === '';
         } else {
-            this.sendButton.disabled = true; // Деактивируем в режиме аудио
+            this.sendButton.disabled = true;
         }
     }
 
@@ -123,18 +125,14 @@ export class InputArea {
         this.activeTab = event.currentTarget.dataset.tab;
         this.setActiveSection(this.activeTab);
 
-        // Обновляем состояние кнопки отправки после переключения режима
         this.updateSendButtonState();
 
-        // Скрываем подсказки при переключении на аудио
         if (this.activeTab === 'audio') {
             this.suggestionsContainer.classList.remove('active');
-            // Если была запись, останавливаем ее при переключении обратно на текст
             if (this.isRecording) {
                 this.stopRecording(true); // Останавливаем без отправки
             }
         } else {
-            // Если переключились на текст, очищаем поле на всякий случай
             this.micButton.classList.remove('recording');
             this.micButton.innerHTML = '<span class="material-icons">mic</span>';
             this.micPlaceholderText.textContent = 'Нажмите и отпустите, чтобы начать запись';
@@ -155,11 +153,11 @@ export class InputArea {
     }
 
     startRecording() {
-        if (this.isRecording) return; // Чтобы избежать двойного старта
+        if (this.isRecording) return;
         this.isRecording = true;
         this.recordingStartTime = Date.now();
         this.micButton.classList.add('recording');
-        this.micButton.innerHTML = '<span class="material-icons">stop</span>'; // Иконка "стоп" при записи
+        this.micButton.innerHTML = '<span class="material-icons">stop</span>';
         this.micPlaceholderText.textContent = 'Идет запись... 00:00';
 
         let seconds = 0;
@@ -171,7 +169,6 @@ export class InputArea {
         }, 1000);
 
         console.log('Начата запись...');
-        // Здесь должна быть реальная логика Web Audio API для старта записи
     }
 
     stopRecording(cancel = false) {
@@ -183,22 +180,23 @@ export class InputArea {
         this.micButton.classList.remove('recording');
         this.micButton.innerHTML = '<span class="material-icons">mic</span>';
 
+        // Вычисляем длительность записи, округляем до 1 секунды, минимум 1 секунда для отправки
         const recordingDurationMs = Date.now() - this.recordingStartTime;
-        const recordingDurationSeconds = Math.round(recordingDurationMs / 1000);
+        const recordingDurationSeconds = Math.max(1, Math.round(recordingDurationMs / 1000));
 
-        if (!cancel && recordingDurationSeconds > 0) { // Отправляем только если есть запись и не отмена
+        if (!cancel && recordingDurationSeconds > 0) {
             this.micPlaceholderText.textContent = 'Аудио отправлено. Нажмите, чтобы начать новую запись.';
             console.log(`Запись остановлена. Длительность: ${recordingDurationSeconds} сек.`);
-            // Имитация отправки аудио сообщения
+            // Используем реальный путь к файлу для отправляемого аудио от пользователя
             this.onSendMessage({
-                audioUrl: 'mock', // Для реальной отправки здесь будет Blob URL или другой идентификатор
-                audioDuration: recordingDurationSeconds
+                audioUrl: USER_RECORDED_AUDIO_URL,
+                // Для демо, если не указана длительность, возьмем из константы
+                // В реальном проекте, длительность будет известна после обработки записи
+                audioDuration: USER_RECORDED_AUDIO_DURATION || recordingDurationSeconds
             });
         } else {
             this.micPlaceholderText.textContent = 'Нажмите и отпустите, чтобы начать запись';
             console.log('Запись отменена или слишком короткая.');
         }
-
-        // Здесь должна быть реальная логика Web Audio API для остановки записи
     }
 }
