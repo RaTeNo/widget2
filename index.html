@@ -84,6 +84,43 @@
     </div>
 
     <!-- Главный скрипт -->
+
+    <div class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close-button">&times;</button>
+
+            <div class="modal-header">
+                <span class="dot"></span>
+                <h2>Настройка CRM</h2>
+            </div>
+
+            <div class="modal-body">
+                <div class="input-group">
+                    <input type="text" placeholder="Ваш логин">
+                </div>
+                <div class="input-group">
+                    <input type="password" placeholder="Пароль" class="input-error">
+                    <p class="error-message">Неверные данные</p>
+                </div>
+                <div class="input-group">
+                    <input type="text" placeholder="Project ID">
+                </div>
+                <div class="input-group">
+                    <input type="text" placeholder="Данные сервера">
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <div class="status-message success-message">
+                    <span class="icon-checkmark">&#x2713;</span>
+                    Изменения <br> сохранены
+                </div>
+                <button class="save-button">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
+    
     <script src="js/main.js" type="module"></script>
 </body>
 </html>

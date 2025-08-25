@@ -579,7 +579,7 @@ button {
     grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
     gap: var(--spacing-sm);
     margin-top: var(--spacing-md);
-    max-height: 150px;
+   
 }
 
 .chat-input-area__suggestions.active {
@@ -654,5 +654,218 @@ button {
 {
     .ai-assistant-chat{
         width: 100%;
+    }
+}
+
+/* Оверлей модального окна */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4); /* Полупрозрачный черный фон */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* Контейнер модального окна */
+.modal-content {
+    background: linear-gradient(180deg, #F5F8FE 0%, #DAE6FE 100%);
+    box-shadow: 0px 4px 84px rgba(0, 0, 0, 0.64);
+    border-radius: 30px; /* Сильное скругление углов */
+    padding: 30px 25px; /* Отступы внутри */
+    width: 100%;
+    max-width: 380px; /* Максимальная ширина модалки */
+    position: relative;
+    box-sizing: border-box; /* Учитываем padding в ширине */
+}
+
+/* Кнопка закрытия */
+.modal-close-button {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background-color: #ff4a68; /* Красный фон кнопки закрытия */
+    color: #fff;
+    border: none;
+    border-radius: 50%; /* Круглая кнопка */
+    width: 30px;
+    height: 30px;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    line-height: 1; /* Для центрирования 'X' */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.2s ease;
+}
+
+.modal-close-button:hover {
+    background-color: #e63a56;
+}
+
+/* Заголовок модального окна */
+.modal-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.modal-header .dot {
+    width: 12px;
+    height: 12px;
+    background-color: #3b82f6; /* Синяя точка */
+    border-radius: 50%;
+    margin-right: 12px;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 24px;
+    color: #333;
+    font-weight: 600;
+}
+
+/* Секция тела модального окна (поля ввода) */
+.modal-body {
+    margin-bottom: 20px;
+}
+
+.input-group {
+    margin-bottom: 10px;
+    position: relative; /* Для сообщения об ошибке */
+}
+
+.input-group:last-of-type {
+    margin-bottom: 0;
+}
+
+.input-group input[type="text"],
+.input-group input[type="password"] {
+    width: 100%;
+    padding: 14px 20px;
+    border: 0px solid #e0e0e0;
+    border-radius: 10px; /* Скругленные углы инпутов */
+    font-size: 16px;
+    color: #333;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    box-sizing: border-box; /* Учитываем padding в ширине */
+    background-color: #f9f9fb; /* Легкий фон для инпутов */
+}
+
+.input-group input::placeholder {
+    color: #a0a0a0;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: #9bd0ff; /* Синяя обводка при фокусе */
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+/* Стиль для инпута с ошибкой */
+.input-group input.input-error {
+    border-color: #ff4a68; /* Красная обводка для ошибки */
+    box-shadow: 0 0 0 3px rgba(255, 74, 104, 0.2);
+}
+
+/* Сообщение об ошибке */
+.error-message {
+    color: #ff4a68;
+    font-size: 13px;
+    margin-top: 5px;
+    margin-left: 5px;
+    bottom: -20px; /* Располагаем ниже инпута */
+    left: 0;
+    white-space: nowrap; /* Чтобы текст не переносился */
+    text-align: right;
+}
+
+
+/* Футер модального окна */
+.modal-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 15px;
+}
+
+/* Сообщение об успешном сохранении */
+.status-message {
+    display: flex;
+    align-items: center;
+    color: #4CAF50; /* Зеленый цвет для успеха */
+    font-size: 16px;
+    line-height: 1.3;
+}
+
+.status-message .icon-checkmark {
+    font-family: sans-serif; /* Для лучшей отрисовки галочки */
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 28px;
+    height: 28px;
+    background-color: #4CAF50; /* Зеленый фон для галочки */
+    color: #fff;
+    border-radius: 50%;
+    margin-right: 12px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+
+/* Кнопка "Сохранить" */
+.save-button {
+    background-color: #3b82f6; /* Синий фон */
+    color: #fff;
+    border: none;
+    border-radius: 10px; /* Скругленные углы кнопки */
+    padding: 14px 30px;
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 4px 10px rgba(59, 130, 246, 0.2); /* Тень для кнопки */
+}
+
+.save-button:hover {
+    background-color: #2563eb;
+    box-shadow: 0 6px 15px rgba(59, 130, 246, 0.3);
+}
+
+/* Медиа-запросы для адаптивности */
+@media (max-width: 500px) {
+    .modal-content {
+        padding: 25px 30px;
+        margin: 20px; /* Отступы по бокам на мелких экранах */
+    }
+
+    .modal-header h2 {
+        font-size: 22px;
+    }
+
+    .input-group input {
+        padding: 12px 18px;
+        font-size: 15px;
+    }
+
+    .save-button {
+        padding: 12px 25px;
+        font-size: 16px;
+    }
+
+    .modal-footer {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .status-message {
+        margin-bottom: 20px; /* Отступ после сообщения успеха */
     }
 }
